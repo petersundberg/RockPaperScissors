@@ -123,19 +123,19 @@ export default class App extends React.Component {
       finalScore = <FinalScore winLose="You win" myScore={this.myScore} cpuScore={this.cpuScore}/>
     } else if(this.cpuScore===this.sets) {
         this.gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu win" myScore={this.myScore} cpuScore={this.cpuScore}/>
+        finalScore = <FinalScore winLose="Cpu wins" myScore={this.myScore} cpuScore={this.cpuScore}/>
     } else if(this.myScore+this.sets%2===this.sets && this.sets>1) {
         this.gameOver = 1;
         finalScore = <FinalScore winLose="You win" myScore={this.myScore} cpuScore={this.cpuScore}/>
     } else if(this.cpuScore+this.sets%2===this.sets && this.sets>1) {
         this.gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu win" myScore={this.myScore} cpuScore={this.cpuScore}/>
+        finalScore = <FinalScore winLose="Cpu wins" myScore={this.myScore} cpuScore={this.cpuScore}/>
     } else if(this.myScore+this.sets%2+1===this.sets && this.sets>3) {
         this.gameOver = 1;
         finalScore = <FinalScore winLose="You win" myScore={this.myScore} cpuScore={this.cpuScore}/>
     } else if(this.cpuScore+this.sets%2+1===this.sets && this.sets>3) {
         this.gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu win" myScore={this.myScore} cpuScore={this.cpuScore}/>
+        finalScore = <FinalScore winLose="Cpu wins" myScore={this.myScore} cpuScore={this.cpuScore}/>
     }
   }
 

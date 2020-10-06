@@ -185,9 +185,9 @@ export default class App extends React.Component {
     let header;
     let scoreBoard;
     if(!buttonPress) {
-      header = <SetText header="Välj antal set"/>
+      header = <SetText header="Choose a number of sets"/>
     } else {
-      header = <SetText header="Välj hand" rounds={sets + " set"}/>
+      header = <SetText header="Choose hand" rounds={sets + " set"}/>
       scoreBoard = <UpdateScoreboard myScore={myScore} cpuScore={cpuScore} />
     }
     if(!buttonPress && gameOver===0) {

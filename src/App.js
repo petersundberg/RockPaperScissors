@@ -202,7 +202,7 @@ export default class App extends React.Component {
       return(
         <div className="App">
         {header}
-        <HandForm click={this.handleGame} value1={Choice[0]} value2={Choice[1]} value3={Choice[2]}/>
+        <SetForm click={this.handleGame} value1={Choice[0]} value2={Choice[1]} value3={Choice[2]}/>
         {scoreBoard}
       </div>
       );
@@ -273,29 +273,4 @@ function SetForm(props) {
               name="sets"/>
         </div>
     )
-}
-
-function HandForm(props) {
-  return(
-      <div className="choiceButton">
-          <input
-            className="choiceButton"
-            type="button"
-            value={props.value1}
-            onClick={props.click}
-            name="sets"/>
-          <input 
-            className="choiceButton"
-            type="button" 
-            value={props.value2} 
-            onClick={props.click}
-            name="sets"/>
-          <input 
-            className="choiceButton"
-            type="button" 
-            value={props.value3}
-            onClick={props.click}
-            name="sets"/>
-      </div>
-  )
 }

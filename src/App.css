@@ -22,17 +22,22 @@ body {
     padding: 16px 32px;
     margin: 50px 30px;
     font-size: 20px;
+    background-color: gray;
+    border-radius: 3px;
+    outline: none;
+  }
+
+  input[type=submit] {
+    padding: 16px 32px;
+    margin: 50px 30px;
+    font-size: 20px;
+    background-color: gray;
+    border-radius: 3px;
+    outline: none;
   }
   
   .radioBtn {
     display: inline-block;
-  }
-  
-  input[type=submit] {
-    display: block;
-    margin: 30px auto;
-    font-size: xx-large;
-    border: 1px solid black;
   }
   
   label {

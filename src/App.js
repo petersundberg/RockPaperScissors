@@ -2,10 +2,10 @@ import React from 'react';
 import { Choice } from './Choice';
 import './App.css';
 
-let i, lastValue, myPreviousHandText, cpuPreviousHandText;
+let playedSets, lastValue, myPreviousHandText, cpuPreviousHandText;
 let isChecked, finalScore, wonSet;
 let buttonPress, myScore, cpuScore;
-let sets, gameOver;
+let sets, gameOver, notDraw;
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,14 +14,15 @@ export default class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleGame = this.handleGame.bind(this);
-    i = 0;
+    playedSets = 0;
     myPreviousHandText = ""
     cpuPreviousHandText = ""
     buttonPress = false;
     myScore = 0;
     cpuScore = 0;
     sets = 0;
-    gameOver = 0;
+    gameOver = false;
+    notDraw = false;
   }
 
   /**
@@ -55,11 +56,11 @@ export default class App extends React.Component {
   handleGame(event) {
     event.preventDefault();
     if(isChecked) {
-      if(i<sets) {
+      if(playedSets<sets) {
         this.checkSetWinner(lastValue, Choice[this.generateCpuHand()])
-        i++;
+        playedSets++;
       }
-      if(i===sets || gameOver===0) {
+      if(!gameOver) {
         this.checkGameWinner();
       }
       this.uncheckRadiobuttons();
@@ -89,17 +90,20 @@ export default class App extends React.Component {
    */
   generateCpuHand() {
     let cpuChoice = new Array(2);
-    if(wonSet===1) {
+    if(notDraw) {
+      if(wonSet) {
         cpuChoice[0] = Choice[cpuPreviousHandText];
         cpuChoice[1] = Math.floor(Math.random() * Math.floor(3))
         return cpuChoice[Math.floor(Math.random() * Math.floor(2))]
-    } else if(wonSet===2) {
+    } else {
         cpuChoice[0] = Math.floor(Math.random() * Math.floor(3))
         cpuChoice[1] = Math.floor(Math.random() * Math.floor(3))
         return cpuChoice[Math.floor(Math.random() * Math.floor(2))]
+      } 
     } else {
-        return Math.floor(Math.random() * Math.floor(3))
-    }
+      return Math.floor(Math.random() * Math.floor(3))
+  }
+    
   }
 
   /**
@@ -114,38 +118,44 @@ export default class App extends React.Component {
     switch(myHand) {
       case "Rock":
         if(cpuHand==="Rock") {
-          i--;
-          wonSet = 3;
+          playedSets--;
+          notDraw = false;
         } else if(cpuHand==="Paper") {
           cpuScore++;
-          wonSet = 1;
+          notDraw = true;
+          wonSet = true;
         } else {
           myScore++;
-          wonSet = 2;
+          notDraw = true;
+          wonSet = false;
         }
         break;
       case "Paper":
         if(cpuHand==="Rock") {
           myScore++;
-          wonSet = 2;
+          notDraw = true;
+          wonSet = false;
         } else if(cpuHand==="Paper") {
-          i--;
-          wonSet = 3;
+          playedSets--;
+          notDraw = false;
         } else {
           cpuScore++;
-          wonSet = 1;
+          notDraw = true;
+          wonSet = true;
         }
         break;
       default:
         if(cpuHand==="Rock") {
           cpuScore++;
-          wonSet = 1;
+          notDraw = true;
+          wonSet = true;
         } else if(cpuHand==="Paper") {
           myScore++;
-          wonSet = 2;
+          notDraw = true;
+          wonSet = false;
         } else {
-          i--;
-          wonSet = 3;
+          playedSets--;
+          notDraw = false;
         }
         break;
     }
@@ -156,24 +166,35 @@ export default class App extends React.Component {
    * till en komponent.
    */
   checkGameWinner() {
-    if(myScore===sets) {
-      gameOver = 1;
-      finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
-    } else if(cpuScore===sets) {
-        gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
-    } else if(myScore+sets%2===sets && sets>1) {
-        gameOver = 1;
-        finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
-    } else if(cpuScore+sets%2===sets && sets>1) {
-        gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
-    } else if(myScore+sets%2+1===sets && sets>3) {
-        gameOver = 1;
-        finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
-    } else if(cpuScore+sets%2+1===sets && sets>3) {
-        gameOver = 1;
-        finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
+    switch(sets) {
+      case 1:
+        if(myScore>cpuScore) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
+        } else if(myScore<cpuScore) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
+        }
+        break;
+      case 3:
+        if(myScore+sets%2===sets) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
+      } else if(cpuScore+sets%2===sets) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
+        } 
+        break;
+      case 5:
+        if(myScore+sets%2+1===sets) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
+      } else if(cpuScore+sets%2+1===sets) {
+          gameOver = true;
+          finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
+        }
+        break;
+      default:
     }
   }
 
@@ -190,7 +211,7 @@ export default class App extends React.Component {
       header = <SetText header="Choose hand" rounds={sets + " set"}/>
       scoreBoard = <UpdateScoreboard myScore={myScore} cpuScore={cpuScore} />
     }
-    if(!buttonPress && gameOver===0) {
+    if(!buttonPress && !gameOver) {
       return (
         <div className="App">
         {header}
@@ -228,7 +249,7 @@ export default class App extends React.Component {
         </form>
       </div>
       );
-    } else if(buttonPress && gameOver===0) {
+    } else if(buttonPress && !gameOver) {
       return(
         <div className="App">
         {header}

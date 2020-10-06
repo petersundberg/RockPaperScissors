@@ -2,8 +2,8 @@ import React from 'react';
 import { Choice } from './Choice';
 import './App.css';
 
-let playedSets, lastValue, myPreviousHandText, cpuPreviousHandText;
-let isChecked, finalScore, wonSet;
+let playedSets, myPreviousHandText, cpuPreviousHandText;
+let finalScore, wonSet;
 let buttonPress, myScore, cpuScore;
 let sets, gameOver, notDraw;
 
@@ -30,24 +30,18 @@ export default class App extends React.Component {
    */
   handleChange(event) {
     this.setState({value: event.target.value});
-    lastValue = event.target.value;
-    isChecked = event.target.checked;
-    event.target.defaultChecked = false;
   } 
 
   /**
    * Hanterar knapptryckningen när man väljer set.
    */
   handleSubmit(event) {
+    sets = event.target.value;
     event.preventDefault();
-    if(isChecked) {
-      if(buttonPress===false) {
-        sets = parseInt(lastValue);
+      if(!buttonPress) {
         buttonPress = true;
       }
-      this.uncheckRadiobuttons();
       this.handleChange(event)
-    }
   }
 
   /**
@@ -55,29 +49,14 @@ export default class App extends React.Component {
    */
   handleGame(event) {
     event.preventDefault();
-    if(isChecked) {
-      if(playedSets<sets) {
-        this.checkSetWinner(lastValue, Choice[this.generateCpuHand()])
-        playedSets++;
-      }
-      if(!gameOver) {
-        this.checkGameWinner();
-      }
-      this.uncheckRadiobuttons();
-      this.handleChange(event)
+    if(playedSets<sets) {
+      this.checkSetWinner(event.target.value, Choice[this.generateCpuHand()])
+      playedSets++;
     }
-  }
-
-  /**
-   * Avmarkerar radioknappen som är markerad
-   */
-  uncheckRadiobuttons() {
-    let radioBtns = document.getElementsByClassName("choiceButton");
-    for(let i=0; i<radioBtns.length; i++) {
-      if(radioBtns.item(i).checked) {
-        radioBtns.item(i).checked = false;
-      }
+    if(!gameOver) {
+      this.checkGameWinner();
     }
+    this.handleChange(event)
   }
 
   /**
@@ -167,7 +146,7 @@ export default class App extends React.Component {
    */
   checkGameWinner() {
     switch(sets) {
-      case 1:
+      case "1":
         if(myScore>cpuScore) {
           gameOver = true;
           finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
@@ -176,25 +155,26 @@ export default class App extends React.Component {
           finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
         }
         break;
-      case 3:
-        if(myScore+sets%2===sets) {
+      case "3":
+        if(myScore+sets%2===+sets) {
           gameOver = true;
           finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
-      } else if(cpuScore+sets%2===sets) {
+      } else if(cpuScore+sets%2===+sets) {
           gameOver = true;
           finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
-        } 
+        }
         break;
-      case 5:
-        if(myScore+sets%2+1===sets) {
+      case "5":
+        if(myScore+sets%2+1===+sets) {
           gameOver = true;
           finalScore = <FinalScore winLose="You win" myScore={myScore} cpuScore={cpuScore}/>
-      } else if(cpuScore+sets%2+1===sets) {
+      } else if(cpuScore+sets%2+1===+sets) {
           gameOver = true;
           finalScore = <FinalScore winLose="Cpu wins" myScore={myScore} cpuScore={cpuScore}/>
         }
         break;
       default:
+        break;
     }
   }
 
@@ -215,76 +195,14 @@ export default class App extends React.Component {
       return (
         <div className="App">
         {header}
-        <form onSubmit={this.handleSubmit}>
-          <div className="radioBtn">
-            <label>
-              1 set
-              <input
-                className="choiceButton"
-                type="radio"
-                value={1}
-                onClick={this.handleChange}
-                name="sets"/>
-            </label>
-            <label>
-              3 set
-              <input 
-                className="choiceButton"
-                type="radio" 
-                value={3} 
-                onClick={this.handleChange}
-                name="sets"/>
-            </label>
-            <label>
-              5 set
-              <input 
-                className="choiceButton"
-                type="radio" 
-                value={5}        
-                onClick={this.handleChange}
-                name="sets"/>
-            </label>
-          </div>
-          <input type="submit" value="Go"/>
-        </form>
+        <SetForm click={this.handleSubmit} value1={1} value2={3} value3={5}/>
       </div>
       );
-    } else if(buttonPress && !gameOver) {
+    } else if(!gameOver) {
       return(
         <div className="App">
         {header}
-        <form onSubmit={this.handleGame}>
-          <div id="radioBtn">
-            <label>
-              {Choice[0]}
-              <input
-                className="choiceButton"
-                type="radio" 
-                value={Choice[0]} 
-                onClick={this.handleChange}
-                name="hand"/>
-            </label>
-            <label>
-              {Choice[1]}
-              <input
-                className="choiceButton"
-                type="radio"
-                value={Choice[1]}
-                onClick={this.handleChange}
-                name="hand"/>
-            </label>
-            <label>
-              {Choice[2]}
-              <input 
-                className="choiceButton"
-                type="radio"
-                value={Choice[2]}
-                onClick={this.handleChange}
-                name="hand"/>
-            </label>
-          </div>
-          <input type="submit" value="Go"/>
-        </form>
+        <HandForm click={this.handleGame} value1={Choice[0]} value2={Choice[1]} value3={Choice[2]}/>
         {scoreBoard}
       </div>
       );
@@ -330,4 +248,54 @@ function FinalScore(props) {
     {"Your score: " + props.myScore} <br/>
     {"Cpu score: " + props.cpuScore} </h1>
   </div>
+}
+
+function SetForm(props) {
+    return(
+        <div className="choiceButton">
+            <input
+              className="choiceButton"
+              type="button"
+              value={props.value1}
+              onClick={props.click}
+              name="sets"/>
+            <input 
+              className="choiceButton"
+              type="button" 
+              value={props.value2} 
+              onClick={props.click}
+              name="sets"/>
+            <input 
+              className="choiceButton"
+              type="button" 
+              value={props.value3}
+              onClick={props.click}
+              name="sets"/>
+        </div>
+    )
+}
+
+function HandForm(props) {
+  return(
+      <div className="choiceButton">
+          <input
+            className="choiceButton"
+            type="button"
+            value={props.value1}
+            onClick={props.click}
+            name="sets"/>
+          <input 
+            className="choiceButton"
+            type="button" 
+            value={props.value2} 
+            onClick={props.click}
+            name="sets"/>
+          <input 
+            className="choiceButton"
+            type="button" 
+            value={props.value3}
+            onClick={props.click}
+            name="sets"/>
+      </div>
+  )
 }

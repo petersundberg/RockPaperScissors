@@ -2,13 +2,8 @@ import React from 'react';
 import { Choice } from './Choice';
 import './App.css';
 
-let i;
-let lastValue;
-let previousHand;
-let myPreviousHandText;
-let cpuPreviousHandText;
-let isChecked;
-let finalScore;
+let i, lastValue, myPreviousHandText, cpuPreviousHandText;
+let isChecked, finalScore, wonSet;
 
 export default class App extends React.Component {
   constructor(props) {
@@ -20,7 +15,6 @@ export default class App extends React.Component {
     i = 0;
     myPreviousHandText = ""
     cpuPreviousHandText = ""
-    
   }
   buttonPress = false;
   myScore = 0;
@@ -43,6 +37,7 @@ export default class App extends React.Component {
         this.sets = parseInt(lastValue);
         this.buttonPress = true;
       }
+      this.uncheckRadiobuttons();
       this.handleChange(event)
     }
   }
@@ -50,14 +45,9 @@ export default class App extends React.Component {
   handleGame(event) {
     event.preventDefault();
     if(isChecked) {
-      if(lastValue===undefined) {
-        lastValue = previousHand;
-      } else {
-        previousHand = lastValue;
-      }
       if(i<this.sets) {
-        i++;
         this.checkSetWinner(lastValue, Choice[this.generateCpuHand()])
+        i++;
       }
       if(i===this.sets || this.gameOver===0) {
         this.checkGameWinner();
@@ -70,17 +60,27 @@ export default class App extends React.Component {
   uncheckRadiobuttons() {
     var radioBtns = document.getElementsByClassName("choiceButton");
     for(var i=0; i<radioBtns.length; i++) {
-      if(radioBtns.item(i)) {
-        
+      if(radioBtns.item(i).checked) {
+        radioBtns.item(i).checked = false;
       }
-
-      
-       console.log(radioBtns.isChecked);
     }
   }
 
   generateCpuHand() {
-    return Math.floor(Math.random() * Math.floor(3))
+    let cpuChoice = new Array(2);
+    if(i===0) {
+      return Math.floor(Math.random() * Math.floor(3))
+    } else if(wonSet===1) {
+        cpuChoice[0] = Choice[cpuPreviousHandText];
+        cpuChoice[1] = Math.floor(Math.random() * Math.floor(3))
+        return cpuChoice[Math.floor(Math.random() * Math.floor(2))]
+    } else if(wonSet===2) {
+        cpuChoice[0] = Math.floor(Math.random() * Math.floor(3))
+        cpuChoice[1] = Math.floor(Math.random() * Math.floor(3))
+        return cpuChoice[Math.floor(Math.random() * Math.floor(2))]
+    } else {
+        return Math.floor(Math.random() * Math.floor(3))
+    }
   }
 
   checkSetWinner(myHand, cpuHand) {
@@ -90,28 +90,37 @@ export default class App extends React.Component {
       case "Rock":
         if(cpuHand==="Rock") {
           i--;
+          wonSet = 3;
         } else if(cpuHand==="Paper") {
           this.cpuScore++;
+          wonSet = 1;
         } else {
           this.myScore++;
+          wonSet = 2;
         }
         break;
       case "Paper":
         if(cpuHand==="Rock") {
           this.myScore++;
+          wonSet = 2;
         } else if(cpuHand==="Paper") {
           i--;
+          wonSet = 3;
         } else {
           this.cpuScore++;
+          wonSet = 1;
         }
         break;
       default:
         if(cpuHand==="Rock") {
           this.cpuScore++;
+          wonSet = 1;
         } else if(cpuHand==="Paper") {
           this.myScore++;
+          wonSet = 2;
         } else {
           i--;
+          wonSet = 3;
         }
         break;
     }
@@ -144,7 +153,7 @@ export default class App extends React.Component {
     let scoreBoard;
 
     if(!this.buttonPress) {
-      header = <SetText header="Välj alternativ"/>
+      header = <SetText header="Välj antal set"/>
     } else {
       header = <SetText header="Välj hand" rounds={this.sets + " set"}/>
       scoreBoard = <UpdateScoreboard myScore={this.myScore} cpuScore={this.cpuScore} />
@@ -157,8 +166,9 @@ export default class App extends React.Component {
           <div className="radioBtn">
             <label>
               1 set
-              <input 
-                type="radio" 
+              <input
+                className="choiceButton"
+                type="radio"
                 value={1}
                 onClick={this.handleChange}
                 name="sets"/>
@@ -166,6 +176,7 @@ export default class App extends React.Component {
             <label>
               3 set
               <input 
+                className="choiceButton"
                 type="radio" 
                 value={3} 
                 onClick={this.handleChange}
@@ -174,6 +185,7 @@ export default class App extends React.Component {
             <label>
               5 set
               <input 
+                className="choiceButton"
                 type="radio" 
                 value={5}        
                 onClick={this.handleChange}
@@ -243,9 +255,9 @@ function SetText(props) {
 
 function UpdateScoreboard(props) {
   return <div>
-    <p>{"My score: " + props.myScore}</p>
+    <p>{"Your score: " + props.myScore}</p>
     <p>{"Cpu score: " + props.cpuScore}</p>
-    <p>{"My hand: " + myPreviousHandText}</p>
+    <p>{"Your hand: " + myPreviousHandText}</p>
     <p>{"Cpu hand: " + cpuPreviousHandText}</p>
   </div>
 }
@@ -253,7 +265,7 @@ function UpdateScoreboard(props) {
 function FinalScore(props) {
   return <div>
     <h1>{props.winLose} <br/>
-    {"My score: " + props.myScore} <br/>
+    {"Your score: " + props.myScore} <br/>
     {"Cpu score: " + props.cpuScore} </h1>
   </div>
 }

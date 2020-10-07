@@ -1,51 +1,45 @@
 body {
   background-color: #2C3258;
+  overflow: hidden;
   }
 
-  .App {
-    text-align: center;
-    font-size: xx-large;
-    background-color: rgb(201, 204, 207);
-    margin: auto;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    flex-flow: column;
-  }
-  
-  form {
-    display: block;
-    margin: 50px auto;
-  }
-  
-  input[type=button] {
-    padding: 16px 32px;
-    margin: 50px 30px;
-    font-size: 20px;
-    background-color: gray;
-    border-radius: 3px;
-    outline: none;
-  }
+.App {
+  text-align: center;
+  font-size: xx-large;
+  background-color: rgb(201, 204, 207);
+  margin: auto;
+  width: 60%;
+  height: 110vh;
+  display: flex;
+  flex-flow: column;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
 
-  input[type=submit] {
-    padding: 16px 32px;
-    margin: 50px 30px;
-    font-size: 20px;
-    background-color: gray;
-    border-radius: 3px;
-    outline: none;
-  }
-  
-  .radioBtn {
-    display: inline-block;
-  }
-  
-  label {
-    display: inline-block;
-    text-align: center;
-    width: 150px;
-  }
-  
-h1 {
-  margin-top: 200px;
+input[type=button] {
+  padding: 16px 32px;
+  margin: 50px 30px;
+  font-size: 20px;
+  background-color: gray;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type=submit] {
+  padding: 16px 32px;
+  margin: 50px 30px;
+  font-size: 20px;
+  background-color: gray;
+  border-radius: 3px;
+  outline: none;
+}
+
+.radioBtn {
+  display: inline-block;
+}
+
+label {
+  display: inline-block;
+  text-align: center;
+  width: 150px;
 }
